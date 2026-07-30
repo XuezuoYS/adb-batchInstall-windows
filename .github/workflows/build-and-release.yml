@@ -34,11 +34,6 @@ jobs:
         env:
           PYTHONIOENCODING: utf-8
 
-      - name: 打包产物
-        shell: powershell
-        run: |
-          Compress-Archive -Path dist/adb-batchInstall-windows.exe -DestinationPath adb-batchInstall-windows.zip
-
       - name: 获取版本号
         id: version
         shell: powershell
@@ -51,7 +46,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.version.outputs.version }}-build.${{ steps.version.outputs.date }}
-          name: 构建 v${{ steps.version.outputs.version }} (${{ steps.version.outputs.date }})
+          name: v${{ steps.version.outputs.version }} (${{ steps.version.outputs.date }})
           body: |
             ## ADB 批量 APK 安装工具
 
@@ -59,6 +54,6 @@ jobs:
             - 构建时间: ${{ steps.version.outputs.date }}
             - 分支: `${{ github.ref_name }}`
             - 提交: ${{ github.sha }}
-          files: adb-batchInstall-windows.zip
+          files: dist/adb-batchInstall-windows.exe
           draft: false
           prerelease: false
