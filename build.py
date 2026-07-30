@@ -209,9 +209,9 @@ def main() -> None:
         3. 清理临时文件
     """
     print()
-    print(color(" ╔══════════════════════════════════════════╗", Colors.CYAN))
-    print(color(" ║     ADB 批量安装工具 - 构建脚本         ║", Colors.CYAN))
-    print(color(" ╚══════════════════════════════════════════╝", Colors.CYAN))
+    print(color(" ============================================", Colors.CYAN))
+    print(color("     ADB 批量安装工具 - 构建脚本", Colors.CYAN))
+    print(color(" ============================================", Colors.CYAN))
     print()
 
     # 1. 检查 & 安装 PyInstaller

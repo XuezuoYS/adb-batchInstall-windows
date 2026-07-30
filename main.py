@@ -333,9 +333,9 @@ def main() -> None:
         4. 选择设备并批量安装
     """
     print()
-    print(color(" ╔══════════════════════════════════════════╗", Colors.CYAN))
-    print(color(" ║     ADB 批量 APK 安装工具 v1.0          ║", Colors.CYAN))
-    print(color(" ╚══════════════════════════════════════════╝", Colors.CYAN))
+    print(color(" ============================================", Colors.CYAN))
+    print(color("     ADB 批量 APK 安装工具 v1.0", Colors.CYAN))
+    print(color(" ============================================", Colors.CYAN))
     print()
 
     # 1. 检查 ADB
