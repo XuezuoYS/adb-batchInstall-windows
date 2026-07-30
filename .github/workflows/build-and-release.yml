@@ -42,18 +42,25 @@ jobs:
           echo "version=$ver" >> $env:GITHUB_OUTPUT
           echo "date=$(Get-Date -Format 'yyyyMMdd-HHmmss')" >> $env:GITHUB_OUTPUT
 
+      - name: 生成 Release 正文
+        shell: powershell
+        run: |
+          $title = "## ADB 批量 APK 安装工具 v${{ steps.version.outputs.version }}"
+          $info = @"
+          - 构建时间: ${{ steps.version.outputs.date }}
+          - 分支: `${{ github.ref_name }}`
+          - 提交: ${{ github.sha }}
+          "@
+          $body = Get-Content RELEASE.md -Raw
+          # 替换占位符后的完整内容
+          ($title + "`n`n" + $body + "`n" + $info) | Out-File -FilePath release-body.md -Encoding utf8
+
       - name: 创建 Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.version.outputs.version }}-build.${{ steps.version.outputs.date }}
           name: v${{ steps.version.outputs.version }} (${{ steps.version.outputs.date }})
-          body: |
-            ## ADB 批量 APK 安装工具
-
-            - 版本: v${{ steps.version.outputs.version }}
-            - 构建时间: ${{ steps.version.outputs.date }}
-            - 分支: `${{ github.ref_name }}`
-            - 提交: ${{ github.sha }}
+          body_path: release-body.md
           files: dist/adb-batchInstall-windows.exe
           draft: false
           prerelease: false
