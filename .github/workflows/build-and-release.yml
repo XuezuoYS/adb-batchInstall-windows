@@ -36,14 +36,14 @@ jobs:
 
       - name: 获取版本号
         id: version
-        shell: powershell
+        shell: pwsh
         run: |
           $ver = Select-String -Path pyproject.toml -Pattern '^version = "(.*)"' | ForEach-Object { $_.Matches.Groups[1].Value }
           echo "version=$ver" >> $env:GITHUB_OUTPUT
           echo "date=$(Get-Date -Format 'yyyyMMdd-HHmmss')" >> $env:GITHUB_OUTPUT
 
       - name: 生成 Release 正文
-        shell: powershell
+        shell: pwsh
         run: |
           $title = "## ADB 批量 APK 安装工具 v${{ steps.version.outputs.version }}"
           $body = Get-Content RELEASE.md -Raw -Encoding utf8
