@@ -1,0 +1,62 @@
+name: Build & Release
+
+on:
+  push:
+    branches:
+      - build
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: 安装 uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: 同步虚拟环境
+        run: uv sync
+
+      - name: 编译 exe
+        run: uv run build.py
+
+      - name: 打包产物
+        shell: powershell
+        run: |
+          Compress-Archive -Path dist/adb-batchInstall-windows.exe -DestinationPath adb-batchInstall-windows.zip
+
+      - name: 获取版本号
+        id: version
+        shell: powershell
+        run: |
+          $ver = Select-String -Path pyproject.toml -Pattern '^version = "(.*)"' | ForEach-Object { $_.Matches.Groups[1].Value }
+          echo "version=$ver" >> $env:GITHUB_OUTPUT
+          echo "date=$(Get-Date -Format 'yyyyMMdd-HHmmss')" >> $env:GITHUB_OUTPUT
+
+      - name: 创建 Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}-build.${{ steps.version.outputs.date }}
+          name: 构建 v${{ steps.version.outputs.version }} (${{ steps.version.outputs.date }})
+          body: |
+            ## ADB 批量 APK 安装工具
+
+            - 版本: v${{ steps.version.outputs.version }}
+            - 构建时间: ${{ steps.version.outputs.date }}
+            - 分支: `${{ github.ref_name }}`
+            - 提交: ${{ github.sha }}
+          files: adb-batchInstall-windows.zip
+          draft: false
+          prerelease: false
