@@ -4,7 +4,9 @@ version = "1.0.0"
 description = "在 Windows 上批量通过 ADB 安装 APK 脚本"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "pyinstaller>=6.21.0",
+]
 
 [project.scripts]
 adb-install = "main:main"
