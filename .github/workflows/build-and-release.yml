@@ -11,6 +11,8 @@ permissions:
 jobs:
   build:
     runs-on: windows-latest
+    env:
+      PYTHONIOENCODING: utf-8
 
     steps:
       - name: 检出代码
@@ -31,8 +33,6 @@ jobs:
 
       - name: 编译 exe
         run: uv run build.py
-        env:
-          PYTHONIOENCODING: utf-8
 
       - name: 获取版本号
         id: version
@@ -46,14 +46,13 @@ jobs:
         shell: powershell
         run: |
           $title = "## ADB 批量 APK 安装工具 v${{ steps.version.outputs.version }}"
+          $body = Get-Content RELEASE.md -Raw -Encoding utf8
           $info = @"
           - 构建时间: ${{ steps.version.outputs.date }}
-          - 分支: `${{ github.ref_name }}`
+          - 分支: ${{ github.ref_name }}
           - 提交: ${{ github.sha }}
           "@
-          $body = Get-Content RELEASE.md -Raw
-          # 替换占位符后的完整内容
-          ($title + "`n`n" + $body + "`n" + $info) | Out-File -FilePath release-body.md -Encoding utf8
+          "$title`n`n$body`n$info" | Out-File release-body.md -Encoding utf8
 
       - name: 创建 Release
         uses: softprops/action-gh-release@v2
